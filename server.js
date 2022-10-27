@@ -7,7 +7,7 @@ const morgan = require('morgan');
 const bodyParser = require('body-parser');
 const path = require('path');
 
-const bucketListItems = require('./routes/api/bucketListItems');
+const profile = require('./routes/api/profile');
 
 app.use(cors());
 app.use(morgan('tiny'));
@@ -20,11 +20,13 @@ mongoose.connect(mongoUri, {
 	.then(() => console.log('MongoDB connected...'))
 	.catch((err) => console.log(err));
 
-app.use('/api/bucketListItems', bucketListItems);
+app.use('/api/profile', profile);
 
 if (process.env.NODE_ENV === 'production') {
-	app.use(express.static(__dirname + '/public/'));
-	app.get(/.*/, (req, res) => res.sendFile(__dirname + '/public/index.html'));
+	app.use(express.static(__dirname + 'client/dist'));
+	app.get(/.*/, (req, res) => {
+		res.sendFile(path.resolve(__dirname, 'client', 'dist', 'index.html'));
+	});
 }
 
 app.listen(PORT, () => console.log(`Example app listening on PORT ${PORT}!`));
